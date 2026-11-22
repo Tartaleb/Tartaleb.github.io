@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F1F3F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11162E" media="(prefers-color-scheme: dark)">
+<title>Tranche, aide à la décision</title>
+<meta name="description" content="Tu hésites ? Pile ou face, roue, pour et contre, critères, duel, 10/10/10 : des méthodes simples pour t’aider à trancher.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preload" href="fonts/archivo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M5.8 24.2A13 13 0 0 1 24.2 5.8Z' fill='%233352FF' transform='translate(-1 -1)'/%3E%3Cpath d='M24.2 5.8A13 13 0 0 1 5.8 24.2Z' fill='%23FFB020' transform='translate(1 1)'/%3E%3C/svg%3E">
+<style>
+@font-face {
+  font-family: "Archivo";
+  src: url("fonts/archivo.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: block;
+}
+:root {
+  --paper: #F1F3F8;
+  --surface: #FFFFFF;
+  --sunk: #E4E8F2;
+  --ink: #1C2551;
+  --ink-2: #565E82;
+  --line: #D7DBE8;
+  --cobalt: #3352FF;
+  --cobalt-text: #2A47E8;
+  --on-cobalt: #FFFFFF;
+  --saffron: #FFB020;
+  --saffron-deep: #C27A00;
+  --on-saffron: #1C2551;
+  --focus: #3352FF;
+  --r-lg: 24px;
+  --r-md: 16px;
+  --r-sm: 12px;
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #11162E;
+    --surface: #1A2044;
+    --sunk: #0B0F24;
+    --ink: #EEF1FF;
+    --ink-2: #A3AACB;
+    --line: #2B3366;
+    --cobalt: #4462FF;
+    --cobalt-text: #93A5FF;
+    --saffron: #FFC145;
+    --saffron-deep: #FFC145;
+    --on-saffron: #11162E;
+    --focus: #93A5FF;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #11162E;
+  --surface: #1A2044;
+  --sunk: #0B0F24;
+  --ink: #EEF1FF;
+  --ink-2: #A3AACB;
+  --line: #2B3366;
+  --cobalt: #4462FF;
+  --cobalt-text: #93A5FF;
+  --saffron: #FFC145;
+  --saffron-deep: #FFC145;
+  --on-saffron: #11162E;
+  --focus: #93A5FF;
+  color-scheme: dark;
+}
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.45;
+  font-weight: 420;
+  font-stretch: 100%;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; -webkit-user-select: none; user-select: none; }
+input, textarea { font: inherit; color: inherit; }
+h1, h2, h3, p { margin: 0; }
+:focus-visible { outline: 2.5px solid var(--focus); outline-offset: 2px; border-radius: 8px; }
+svg.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.wrap { max-width: 480px; margin: 0 auto; padding: 0 20px calc(56px + env(safe-area-inset-bottom)); }
+
+/* ---------- Accueil ---------- */
+.brand { display: flex; align-items: center; gap: 10px; padding: calc(20px + env(safe-area-inset-top)) 0 4px; }
+.logo { width: 30px; height: 30px; flex: none; }
+.logo .a { fill: var(--cobalt); }
+.logo .b { fill: var(--saffron); }
+.wordmark { font-weight: 800; font-stretch: 120%; font-size: 22px; letter-spacing: -0.01em; }
+.dilemma { padding: 22px 0 4px; }
+.q-label { display: block; font-weight: 720; font-stretch: 114%; font-size: 28px; line-height: 1.1; letter-spacing: -0.015em; margin: 0 0 14px; }
+.q-input {
+  display: block; width: 100%; resize: none; overflow: hidden;
+  border: 0; border-bottom: 2px solid var(--ink); border-radius: 0;
+  background: transparent; padding: 6px 0 10px;
+  font-size: 21px; font-weight: 520; line-height: 1.3;
+}
+.q-input::placeholder { color: var(--ink-2); opacity: .75; }
+.q-input:focus, .q-input:focus-visible { outline: none; border-bottom-color: var(--cobalt); }
+.sub { font-size: 15px; font-weight: 700; margin: 26px 0 10px; }
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; padding: 0; }
+.chips:empty { display: none; }
+.chip { display: inline-flex; align-items: center; gap: 2px; max-width: 100%; background: var(--surface); border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 4px 4px 14px; font-weight: 580; }
+.chip-l { overflow-wrap: anywhere; }
+.chip-x { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; color: var(--ink-2); }
+.chip-x svg { width: 16px; height: 16px; }
+.add-row { display: flex; gap: 8px; }
+.field { flex: 1; min-width: 0; height: 48px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: var(--r-sm); background: var(--surface); }
+.field::placeholder { color: var(--ink-2); opacity: .8; }
+.field:focus, .field:focus-visible { border-color: var(--cobalt); outline: none; }
+.add-btn { flex: none; width: 48px; height: 48px; border-radius: var(--r-sm); background: var(--ink); color: var(--paper); display: grid; place-items: center; }
+.hint { color: var(--ink-2); font-size: 14.5px; line-height: 1.45; margin: 10px 0 0; }
+.text-btn { color: var(--cobalt-text); font-weight: 650; padding: 10px 0; text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; text-align: left; }
+.guide-entry { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; margin: 30px 0 6px; padding: 16px 18px; border: 2px solid var(--ink); border-radius: var(--r-md); }
+.guide-entry svg { width: 30px; height: 30px; flex: none; }
+.guide-entry strong { display: block; font-weight: 720; font-size: 16.5px; line-height: 1.25; }
+.guide-entry .ge-sub { display: block; color: var(--ink-2); font-size: 14.5px; margin-top: 2px; }
+.group { font-size: 15px; font-weight: 700; color: var(--ink-2); margin: 30px 0 6px; }
+.methods { display: flex; flex-direction: column; gap: 2px; }
+.method { display: flex; align-items: center; gap: 14px; width: calc(100% + 20px); margin: 0 -10px; padding: 11px 10px; text-align: left; border-radius: var(--r-md); }
+.method:active { background: var(--sunk); }
+.glyph { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border-radius: 15px; }
+.glyph svg { width: 27px; height: 27px; }
+.hasard .glyph { background: var(--saffron); color: var(--on-saffron); }
+.methode .glyph { background: var(--cobalt); color: var(--on-cobalt); }
+.m-text { flex: 1; min-width: 0; }
+.m-name { display: block; font-weight: 720; font-size: 17px; font-stretch: 106%; }
+.m-desc { display: block; color: var(--ink-2); font-size: 14.5px; line-height: 1.35; margin-top: 1px; }
+.m-time { flex: none; font-size: 13.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; align-self: flex-start; padding-top: 4px; }
+
+/* ---------- Écrans de méthode ---------- */
+.topbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 4px; margin: 0 -20px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; background: var(--paper); }
+.icon-btn { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: 50%; }
+.icon-btn:active { background: var(--sunk); }
+.tb-title { flex: 1; min-width: 0; font-size: 19px; font-weight: 760; font-stretch: 110%; }
+.reset-btn { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px 0 11px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-size: 14.5px; font-weight: 650; }
+.reset-btn svg { width: 18px; height: 18px; }
+.reset-btn:active { background: var(--sunk); }
+.ctx { margin: 4px 0 0; font-size: 15px; color: var(--ink-2); overflow-wrap: anywhere; }
+.lede { font-size: 18px; line-height: 1.4; margin: 12px 0 2px; max-width: 34em; }
+.why { margin: 2px 0 14px; }
+.why summary { display: inline-block; cursor: pointer; color: var(--cobalt-text); font-weight: 650; font-size: 15px; padding: 8px 0; list-style: none; }
+.why summary::-webkit-details-marker { display: none; }
+.why summary::after { content: " +"; }
+.why[open] summary::after { content: " –"; }
+.why p { color: var(--ink-2); font-size: 15px; line-height: 1.55; max-width: 36em; }
+.step-h { font-size: 18px; font-weight: 760; margin: 28px 0 10px; }
+.legend { color: var(--ink-2); font-size: 14px; margin: -4px 0 10px; }
+.center { text-align: center; }
+
+.inline-opts { margin: 4px 0 10px; padding: 12px 14px; background: var(--surface); border-radius: var(--r-md); }
+.inline-opts summary { display: flex; justify-content: space-between; gap: 12px; font-weight: 680; cursor: pointer; list-style: none; padding: 4px 0; }
+.inline-opts summary::-webkit-details-marker { display: none; }
+.inline-opts summary::after { content: "Modifier"; color: var(--cobalt-text); font-weight: 650; font-size: 14.5px; }
+.inline-opts[open] summary::after { content: "Fermer"; }
+.inline-opts[open] summary { margin-bottom: 10px; }
+.inline-opts .chip, .inline-opts .field { background: var(--paper); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; border-radius: 999px; font-weight: 700; text-align: center; }
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .45; }
+.btn.primary { background: var(--ink); color: var(--paper); }
+.btn.big { width: 100%; min-height: 56px; font-size: 17px; margin-top: 18px; }
+.btn.ghost { background: var(--surface); border: 1.5px solid var(--line); }
+.btn.on-tone { border: 1.5px solid currentColor; background: transparent; color: inherit; min-height: 44px; padding: 0 16px; font-size: 15px; }
+
+/* Verdict : le moment où l'on tranche */
+.verdict { margin: 26px 0 10px; padding: 46px 22px 24px; background: var(--cobalt); color: var(--on-cobalt); clip-path: polygon(0 30px, 100% 0, 100% 100%, 0 100%); border-radius: 0 0 var(--r-lg) var(--r-lg); }
+.verdict.tone-saffron { background: var(--saffron); color: var(--on-saffron); }
+.v-kicker { font-size: 15px; font-weight: 620; opacity: .92; }
+.v-word { margin-top: 6px; font-size: clamp(38px, 12vw, 60px); line-height: .98; font-weight: 830; font-stretch: 125%; letter-spacing: -0.02em; overflow-wrap: anywhere; hyphens: auto; }
+.v-word.long { font-size: clamp(27px, 8vw, 38px); line-height: 1.04; font-stretch: 112%; }
+.v-note { margin-top: 14px; font-size: 16px; line-height: 1.45; max-width: 34em; }
+.v-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.verdict.reveal { animation: slice .55s var(--ease-out) both; }
+.verdict.reveal .v-word { animation: stretch .75s .1s var(--ease-out) both; }
+@keyframes slice { from { clip-path: polygon(0 30px, 0 30px, 0 100%, 0 100%); } }
+@keyframes stretch { from { font-stretch: 62%; opacity: 0; transform: translateY(8px); } }
+
+/* Pile ou face */
+.picker { margin: 6px 0 4px; }
+.picker .sub { margin: 8px 0 8px; }
+.chips.sel { gap: 6px; }
+.chip.toggle { padding: 9px 14px; }
+.chip.toggle[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.coin-stage { position: relative; height: 290px; display: grid; place-items: center; perspective: 900px; margin-top: 8px; }
+.coin { position: relative; width: 210px; height: 210px; transform-style: preserve-3d; }
+.coin-face { position: absolute; inset: 0; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.coin-face::before { content: ""; position: absolute; inset: 9px; border-radius: 50%; border: 2px solid currentColor; opacity: .3; }
+.coin-face.pile { background: var(--cobalt); color: var(--on-cobalt); }
+.coin-face.face { background: var(--saffron); color: var(--on-saffron); transform: rotateX(180deg); }
+.cf-side { font-size: 14px; font-weight: 650; opacity: .85; }
+.cf-label { margin-top: 4px; font-weight: 800; font-stretch: 112%; font-size: 30px; line-height: 1.05; overflow-wrap: anywhere; }
+.cf-label.m { font-size: 23px; }
+.cf-label.l { font-size: 17px; }
+.coin-shadow { position: absolute; bottom: 14px; left: 50%; width: 150px; height: 18px; margin-left: -75px; border-radius: 50%; background: var(--ink); opacity: .14; filter: blur(6px); }
+.gut { margin-top: 18px; }
+.gut-q { font-weight: 720; font-size: 18px; }
+.gut-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.gut-btns .btn { justify-content: flex-start; border-radius: var(--r-md); }
+.gut-a { font-size: 18px; line-height: 1.45; padding: 16px 18px; border-left: 4px solid var(--ink); background: var(--surface); border-radius: 0 var(--r-md) var(--r-md) 0; }
+
+/* Roue */
+.wheel-stage { position: relative; width: min(100%, 340px); aspect-ratio: 1 / 1; margin: 22px auto 0; }
+.wheel { width: 100%; height: 100%; will-change: transform; }
+.wheel svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.seg { stroke: var(--paper); stroke-width: 1.4; }
+.seg.c0 { fill: var(--cobalt); }
+.seg.c1 { fill: var(--saffron); }
+.seg.c2 { fill: var(--surface); }
+.seg-t { font-weight: 700; font-family: inherit; }
+.seg-t.c0 { fill: var(--on-cobalt); }
+.seg-t.c1 { fill: var(--on-saffron); }
+.seg-t.c2 { fill: var(--ink); }
+.ring { fill: none; stroke: var(--ink); stroke-width: 3; }
+.hub { fill: var(--ink); }
+.wheel-pointer { position: absolute; top: -10px; left: 50%; z-index: 2; width: 0; height: 0; margin-left: -14px; border-left: 14px solid transparent; border-right: 14px solid transparent; border-top: 26px solid var(--ink); }
+
+/* Pour et contre */
+.tabs { display: flex; gap: 6px; overflow-x: auto; margin: 4px -20px 0; padding: 4px 20px 8px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { flex: none; padding: 9px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 650; font-size: 15px; }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.tab .n { font-variant-numeric: tabular-nums; opacity: .75; margin-left: 6px; font-weight: 600; }
+.balance { display: block; width: 100%; max-width: 300px; margin: 6px auto 0; overflow: visible; }
+.balance path, .balance circle { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.balance .pivot { fill: var(--ink); }
+.balance .pan { stroke-width: 0; }
+.balance .pour .pan { fill: var(--cobalt); }
+.balance .contre .pan { fill: var(--saffron); }
+.balance .bal-beam { transform-box: view-box; transform-origin: 130px 34px; transition: transform .7s var(--ease-out); }
+.balance .bal-pan { transition: transform .7s var(--ease-out); }
+.bal-legend { display: flex; justify-content: space-between; max-width: 300px; margin: 2px auto 0; font-weight: 700; font-size: 15px; }
+.bal-legend .n { font-variant-numeric: tabular-nums; }
+.pc-cols { display: grid; gap: 24px; margin-top: 18px; }
+.pc-h { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 760; margin-bottom: 8px; }
+.sw { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+.pour .sw { background: var(--cobalt); }
+.contre .sw { background: var(--saffron); }
+.pc-sum { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 15px; font-weight: 600; }
+.args { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.args:empty { display: none; }
+.arg { display: flex; align-items: center; gap: 4px; padding: 2px 2px 2px 14px; background: var(--surface); border-radius: var(--r-sm); border-left: 4px solid var(--cobalt); }
+.contre .arg { border-left-color: var(--saffron); }
+.arg-t { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 15.5px; padding: 10px 0; }
+.weight { flex: none; display: flex; align-items: flex-end; gap: 3px; height: 44px; padding: 0 10px 13px; }
+.weight i { width: 6px; border-radius: 2px; background: var(--line); }
+.weight i:nth-child(1) { height: 8px; }
+.weight i:nth-child(2) { height: 13px; }
+.weight i:nth-child(3) { height: 18px; }
+.pour .weight.w1 i:nth-child(1), .pour .weight.w2 i:nth-child(-n+2), .pour .weight.w3 i { background: var(--cobalt); }
+.contre .weight.w1 i:nth-child(1), .contre .weight.w2 i:nth-child(-n+2), .contre .weight.w3 i { background: var(--saffron-deep); }
+.icon-btn.sm { width: 40px; height: 40px; color: var(--ink-2); }
+.icon-btn.sm svg { width: 18px; height: 18px; }
+.netlist { list-style: none; margin: 14px 0 0; padding: 0; }
+.netlist li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.netlist .v { font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* Critères */
+.crit { display: flex; align-items: center; gap: 6px; padding: 4px 2px 4px 14px; background: var(--surface); border-radius: var(--r-sm); margin-bottom: 6px; }
+.crit-l { flex: 1; min-width: 0; font-weight: 620; overflow-wrap: anywhere; }
+.dots { display: flex; flex: none; }
+.dot-btn { width: 30px; height: 42px; display: grid; place-items: center; }
+.dot-btn::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink-2); }
+.dot-btn.on::before { background: var(--ink); border-color: var(--ink); }
+.sugg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sugg button { padding: 8px 13px; border-radius: 999px; border: 1.5px dashed var(--ink-2); font-size: 14.5px; font-weight: 620; color: var(--ink-2); }
+.rate-block { padding: 12px 14px 6px; background: var(--surface); border-radius: var(--r-md); margin-bottom: 10px; }
+.rate-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-weight: 740; }
+.rate-h span { font-size: 13.5px; color: var(--ink-2); font-weight: 600; flex: none; }
+.rate-row { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--line); }
+.rate-row:first-of-type { border-top: 0; }
+.r-o { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 15.5px; }
+.rate-row .dot-btn.on::before { background: var(--cobalt); border-color: var(--cobalt); }
+
+/* Classements */
+.rank { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.r-top { display: flex; justify-content: space-between; gap: 12px; font-weight: 620; }
+.r-label { overflow-wrap: anywhere; min-width: 0; }
+.r-val { font-variant-numeric: tabular-nums; color: var(--ink-2); flex: none; }
+.r-bar { height: 10px; border-radius: 5px; background: var(--sunk); margin-top: 6px; overflow: hidden; }
+.r-bar i { display: block; height: 100%; border-radius: 5px; background: var(--ink-2); }
+.rank .win .r-label { font-weight: 780; }
+.rank .win .r-bar i { background: var(--cobalt); }
+
+/* Duel */
+.progress { height: 6px; border-radius: 3px; background: var(--sunk); overflow: hidden; margin-top: 10px; }
+.progress i { display: block; height: 100%; background: var(--ink); border-radius: 3px; transition: width .3s var(--ease-out); }
+.progress-t { font-size: 14px; color: var(--ink-2); margin-top: 8px; font-variant-numeric: tabular-nums; }
+.duel-q { font-size: 24px; font-weight: 760; font-stretch: 110%; margin: 20px 0 12px; }
+.duel { position: relative; display: flex; flex-direction: column; }
+.duel-btn { min-height: 118px; padding: 20px 22px; font-size: 25px; font-weight: 800; font-stretch: 112%; line-height: 1.08; overflow-wrap: anywhere; }
+.duel-btn.a { background: var(--cobalt); color: var(--on-cobalt); text-align: left; border-radius: var(--r-lg) var(--r-lg) 0 0; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), 0 100%); padding-bottom: 34px; }
+.duel-btn.b { background: var(--saffron); color: var(--on-saffron); text-align: right; border-radius: 0 0 var(--r-lg) var(--r-lg); clip-path: polygon(0 22px, 100% 0, 100% 100%, 0 100%); margin-top: -14px; padding-top: 34px; }
+.duel-btn:active { filter: brightness(1.08); }
+.duel-or { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 50%; background: var(--paper); display: grid; place-items: center; font-weight: 750; font-size: 15px; pointer-events: none; }
+.duel-tools { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; margin-top: 10px; }
+
+/* 10/10/10 */
+.ten { background: var(--surface); border-radius: var(--r-md); padding: 14px 14px 6px 16px; margin-top: 12px; }
+.ten-h { font-size: 17px; font-weight: 740; margin-bottom: 4px; overflow-wrap: anywhere; }
+.ten-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 8px; padding: 4px 0; border-top: 1px solid var(--line); }
+.ten-row:first-of-type { border-top: 0; }
+.ten-l { font-size: 14.5px; font-weight: 620; color: var(--ink-2); }
+.faces { display: flex; margin-left: auto; }
+.face-btn { width: 40px; height: 46px; display: grid; place-items: center; color: var(--ink-2); }
+.face-btn svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.face-btn svg .f { fill: currentColor; stroke: none; }
+.face-btn.on { color: var(--on-cobalt); }
+.face-btn.on svg .disc { fill: var(--cobalt); stroke: var(--cobalt); }
+.ten-sum { list-style: none; margin: 16px 0 0; padding: 0; }
+.ten-sum li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.ten-sum .lab { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 620; }
+.ten-sum .mini { display: flex; gap: 2px; color: var(--ink-2); }
+.ten-sum .mini svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.ten-sum .mini svg .f { fill: currentColor; stroke: none; }
+.ten-sum .tot { width: 34px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* Questions */
+.qcard { margin-top: 16px; padding: 24px 20px; background: var(--surface); border-radius: var(--r-lg); }
+.q-num { font-size: 14px; color: var(--ink-2); font-weight: 620; font-variant-numeric: tabular-nums; }
+.q-text { font-size: 25px; line-height: 1.15; font-weight: 760; font-stretch: 108%; margin: 8px 0 12px; letter-spacing: -0.01em; }
+.q-hint { color: var(--ink-2); font-size: 15px; line-height: 1.5; }
+.answers { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.btn.answer { justify-content: flex-start; text-align: left; min-height: 54px; border-radius: var(--r-md); background: var(--surface); border: 1.5px solid var(--line); font-size: 17px; padding: 10px 18px; overflow-wrap: anywhere; }
+.btn.answer[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.recap { list-style: none; padding: 0; margin: 18px 0 0; }
+.recap li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.recap span { color: var(--ink-2); }
+.recap strong { text-align: right; overflow-wrap: anywhere; min-width: 0; }
+
+/* Guide */
+.g-q { margin-top: 24px; }
+.g-q h2 { font-size: 20px; font-weight: 740; margin-bottom: 10px; }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 20; transform: translate(-50%, 16px); width: max-content; max-width: calc(100% - 40px); background: var(--ink); color: var(--paper); padding: 12px 18px; border-radius: 999px; font-weight: 620; font-size: 15px; text-align: center; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; display: flex; align-items: center; gap: 14px; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.toast-act { font-weight: 760; text-decoration: underline; text-underline-offset: 3px; padding: 6px 2px; }
+.toast-act[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .verdict.reveal, .verdict.reveal .v-word { animation: none; }
+  .balance .bal-beam, .balance .bal-pan, .progress i, .toast { transition: none; }
+}
+@media (max-width: 350px) {
+  .wrap { padding-left: 16px; padding-right: 16px; }
+  .face-btn { width: 36px; }
+  .dot-btn { width: 27px; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-msg"></span><button id="toast-act" class="toast-act" data-act="undo" hidden>Annuler</button></div>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Outils ---------- */
+  var $ = function (s, el) { return (el || document).querySelector(s); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  var uid = function () { return Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-3); };
+  var mod = function (a, n) { return ((a % n) + n) % n; };
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var cryptoObj = window.crypto || window.msCrypto;
+  function rnd(n) {
+    if (n <= 1) return 0;
+    if (!cryptoObj || !cryptoObj.getRandomValues) return Math.floor(Math.random() * n);
+    var a = new Uint32Array(1), lim = Math.floor(0x100000000 / n) * n, x;
+    do { cryptoObj.getRandomValues(a); x = a[0]; } while (x >= lim);
+    return x % n;
+  }
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) { var j = rnd(i + 1), t = arr[i]; arr[i] = arr[j]; arr[j] = t; }
+    return arr;
+  }
+  var q = function (label) { return '« ' + esc(label) + ' »'; };
+  var trunc = function (s, n) { return s.length > n ? s.slice(0, n - 1).trim() + '…' : s; };
+  var num = function (x) { return String(Math.round(x * 10) / 10).replace('.', ','); };
+  var plural = function (n, one, many) { return n + ' ' + (Math.abs(n) >= 2 ? many : one); };
+  var reduced = function () { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); };
+  var buzz = function (ms) { try { if (navigator.vibrate) navigator.vibrate(ms || 24); } catch (e) {} };
+  function typo(html) {
+    return html
+      .replace(/ ([?!:;»])/g, ' $1')
+      .replace(/« /g, '« ')
+      .replace(/(\d) (s|min)\b/g, '$1 $2');
+  }
+
+  /* ---------- Sauvegarde ---------- */
+  var KEY = 'tranche:v1';
+  function fresh() {
+    return { v: 1, question: '', options: [], coin: { pair: null }, wheel: { excluded: [] },
+      pc: {}, pcSel: null, crit: [], scores: {}, ten: {}, qa: {}, qi: 0, duel: null };
+  }
+  var isObj = function (x) { return !!x && typeof x === 'object' && !Array.isArray(x); };
+  function sanitize(x) {
+    var s = fresh();
+    if (!isObj(x)) return s;
+    if (typeof x.question === 'string') s.question = x.question.slice(0, 120);
+    if (Array.isArray(x.options)) {
+      s.options = x.options.filter(function (o) { return isObj(o) && typeof o.id === 'string' && typeof o.label === 'string' && o.label; }).slice(0, 12);
+    }
+    if (isObj(x.coin) && Array.isArray(x.coin.pair)) s.coin.pair = x.coin.pair.filter(function (v) { return typeof v === 'string'; }).slice(0, 2);
+    if (isObj(x.wheel) && Array.isArray(x.wheel.excluded)) s.wheel.excluded = x.wheel.excluded.filter(function (v) { return typeof v === 'string'; });
+    if (isObj(x.pc)) Object.keys(x.pc).forEach(function (k) {
+      var d = x.pc[k];
+      if (!isObj(d)) return;
+      var clean = function (l) {
+        return Array.isArray(l) ? l.filter(function (a) { return isObj(a) && typeof a.t === 'string' && typeof a.id === 'string'; })
+          .map(function (a) { return { id: a.id, t: a.t.slice(0, 80), w: clamp(Math.round(+a.w) || 1, 1, 3) }; }) : [];
+      };
+      s.pc[k] = { pour: clean(d.pour), contre: clean(d.contre) };
+    });
+    if (typeof x.pcSel === 'string') s.pcSel = x.pcSel;
+    if (Array.isArray(x.crit)) s.crit = x.crit.filter(function (c) { return isObj(c) && typeof c.id === 'string' && typeof c.label === 'string'; })
+      .map(function (c) { return { id: c.id, label: c.label.slice(0, 40), w: clamp(Math.round(+c.w) || 3, 1, 5) }; }).slice(0, 12);
+    if (isObj(x.scores)) Object.keys(x.scores).forEach(function (c) {
+      if (!isObj(x.scores[c])) return;
+      s.scores[c] = {};
+      Object.keys(x.scores[c]).forEach(function (o) { var v = Math.round(+x.scores[c][o]); if (v >= 1 && v <= 5) s.scores[c][o] = v; });
+    });
+    if (isObj(x.ten)) Object.keys(x.ten).forEach(function (o) {
+      if (!isObj(x.ten[o])) return;
+      s.ten[o] = {};
+      ['m', 'mo', 'y'].forEach(function (k) { var v = x.ten[o][k]; if (typeof v === 'number' && v >= -2 && v <= 2) s.ten[o][k] = Math.round(v); });
+    });
+    if (isObj(x.qa)) Object.keys(x.qa).forEach(function (k) { if (typeof x.qa[k] === 'string') s.qa[k] = x.qa[k]; });
+    if (typeof x.qi === 'number') s.qi = clamp(Math.round(x.qi), 0, 8);
+    if (isObj(x.duel) && typeof x.duel.key === 'string' && Array.isArray(x.duel.pairs) && isObj(x.duel.pts) && Array.isArray(x.duel.hist)) {
+      s.duel = { key: x.duel.key, pairs: x.duel.pairs, i: clamp(Math.round(+x.duel.i) || 0, 0, x.duel.pairs.length), pts: x.duel.pts, hist: x.duel.hist };
+    }
+    return s;
+  }
+  var store = {
+    load: function () { try { var raw = window.localStorage.getItem(KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; } },
+    save: function (v) { try { window.localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
+  };
+  var S = sanitize(store.load());
+  var saveTimer = null;
+  function persist() { clearTimeout(saveTimer); saveTimer = setTimeout(function () { store.save(S); }, 120); }
+  function flush() { clearTimeout(saveTimer); store.save(S); }
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+
+  /* État d'interface, non sauvegardé */
+  var ui = { why: {}, optsOpen: false, lastVerdict: {}, coin: null, coinRot: 0, coinN: 0,
+    wheel: null, wheelRot: 0, wheelN: 0, balAngle: null, balTarget: 0, guide: {} };
+  var busy = false;
+
+  /* ---------- Options ---------- */
+  var YESNO = [{ id: '_oui', label: 'Oui' }, { id: '_non', label: 'Non' }];
+  var opts = function () { return S.options.length >= 2 ? S.options : YESNO; };
+  var usingYesNo = function () { return S.options.length < 2; };
+  var labelOf = function (id) { var o = opts().filter(function (x) { return x.id === id; })[0]; return o ? o.label : ''; };
+
+  /* ---------- Icônes ---------- */
+  var P = {
+    back: '<path d="M15 5l-7 7 7 7"/>',
+    x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    coin: '<circle cx="12" cy="12" r="8.6"/><circle cx="12" cy="12" r="5.4"/>',
+    wheel: '<circle cx="12" cy="13.2" r="8.3"/><path d="M12 4.9v16.6M4.8 9.05l14.4 8.3M4.8 17.35l14.4-8.3"/><path d="M10 1.2h4l-2 3.2z" fill="currentColor" stroke-width="1.2"/>',
+    balance: '<path d="M12 4.5V19M8 19.5h8M4 8h16"/><path d="M4 8l-2.6 6.2M4 8l2.6 6.2M20 8l-2.6 6.2M20 8l2.6 6.2"/><path d="M1.2 14.2h5.6a2.8 2.8 0 0 1-5.6 0zM17.2 14.2h5.6a2.8 2.8 0 0 1-5.6 0z"/>',
+    grid: '<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5 9.2h17M3.5 14.8h17M9.2 3.5v17"/>',
+    duel: '<path d="M4.5 4.5l15 15M14 18l4-4M19.5 4.5l-15 15M6 14l4 4"/>',
+    hourglass: '<path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5v2.2c0 2.6 8 3.7 8 6.3s-8 3.7-8 6.3v2.2M16 3.5v2.2c0 2.6-8 3.7-8 6.3s8 3.7 8 6.3v2.2"/>',
+    question: '<path d="M4 4.5h16v11.5H10l-4.5 4v-4H4z"/><path d="M9.8 8.4a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.4v.3M12 14.3v.1"/>',
+    reset: '<path d="M4.6 12.4a7.4 7.4 0 1 0 2.1-5.6"/><path d="M4.4 4.4v4.3h4.3"/>',
+    sign: '<path d="M12 21V3"/><path d="M12 5.2h6.3l2.2 2.3-2.2 2.3H12zM12 11.6H5.7l-2.2 2.3 2.2 2.3H12z"/>'
+  };
+  var icon = function (k) { return '<svg class="i" viewBox="0 0 24 24" aria-hidden="true">' + P[k] + '</svg>'; };
+  var LOGO = '<svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path class="a" d="M5.8 24.2A13 13 0 0 1 24.2 5.8Z" transform="translate(-1 -1)"/><path class="b" d="M24.2 5.8A13 13 0 0 1 5.8 24.2Z" transform="translate(1 1)"/></svg>';
+  function face(v, cls) {
+    var my = 15.6 - v * 0.25, cy = my + v * 2.1;
+    return '<svg viewBox="0 0 32 32" aria-hidden="true"' + (cls ? ' class="' + cls + '"' : '') + '><circle class="disc" cx="16" cy="16" r="13"/>' +
+      '<circle class="f" cx="11.6" cy="13" r="1.6"/><circle class="f" cx="20.4" cy="13" r="1.6"/>' +
+      '<path d="M10.4 ' + (my + 4) + ' Q16 ' + (cy + 4) + ' 21.6 ' + (my + 4) + '"/></svg>';
+  }
+
+  /* ---------- Méthodes ---------- */
+  var M = {
+    pile: { name: 'Pile ou face', icon: 'coin', group: 'hasard', time: '5 s',
+      desc: 'Deux options. Observe ta réaction quand la pièce tombe.',
+      lede: 'Lance la pièce, puis écoute ta toute première réaction : soulagement ou déception ?',
+      why: 'La pièce ne décide pas vraiment à ta place. Au moment où elle retombe, on ressent souvent un petit « ouf » ou un pincement : c’est ta préférence qui se révèle. Si le résultat te déçoit, tu sais ce que tu veux.' },
+    roue: { name: 'La roue', icon: 'wheel', group: 'hasard', time: '10 s',
+      desc: 'Toutes tes options sur une roue. Idéal quand l’enjeu est faible.',
+      lede: 'Fais tourner la roue et laisse le hasard choisir parmi toutes tes options.',
+      why: 'Pour un choix sans grande conséquence, hésiter longtemps coûte plus cher que de mal choisir. Le hasard tranche vite, et tu passes à autre chose.' },
+    'pour-contre': { name: 'Pour et contre', icon: 'balance', group: 'methode', time: '3 min',
+      desc: 'Pèse chaque argument, la balance penche toute seule.',
+      lede: 'Liste les arguments pour et contre, donne à chacun un poids, et regarde de quel côté penche la balance.',
+      why: 'C’est la méthode que Benjamin Franklin décrivait en 1772 : lister les arguments des deux côtés, leur donner un poids, puis voir où penche la balance. Tout mettre par écrit évite de tourner en rond.' },
+    criteres: { name: 'Critères', icon: 'grid', group: 'methode', time: '5 min',
+      desc: 'Note tes options sur ce qui compte vraiment pour toi.',
+      lede: 'Choisis ce qui compte pour toi, dis à quel point, puis note chaque option. Le calcul fait le reste.',
+      why: 'C’est une matrice de décision : chaque note est multipliée par l’importance du critère, puis tout est additionné. Utile quand il y a trop de paramètres pour tout garder en tête.' },
+    duel: { name: 'Duel', icon: 'duel', group: 'methode', time: '2 min',
+      desc: 'Compare tes options deux par deux, le classement se fait seul.',
+      lede: 'À chaque duel, choisis l’option que tu préfères. À la fin, tu obtiens un classement.',
+      why: 'Comparer deux choses à la fois est beaucoup plus facile que de tout classer d’un coup. Chaque duel gagné rapporte un point, et le classement se dessine tout seul.' },
+    '10-10-10': { name: '10 / 10 / 10', icon: 'hourglass', group: 'methode', time: '3 min',
+      desc: 'Comment te sentiras-tu dans 10 minutes, 10 mois, 10 ans ?',
+      lede: 'Pour chaque option, imagine comment tu te sentiras dans 10 minutes, dans 10 mois et dans 10 ans.',
+      why: 'Méthode proposée par la journaliste Suzy Welch. Se projeter à plusieurs horizons aide à ne pas laisser l’émotion du moment décider seule.' },
+    questions: { name: 'Les bonnes questions', icon: 'question', group: 'methode', time: '3 min',
+      desc: 'Huit questions de recul pour faire émerger ton choix.',
+      lede: 'Réponds à huit questions qui obligent à prendre du recul. Tes réponses dessinent ta préférence.',
+      why: 'Ces questions viennent de plusieurs approches : se mettre à la place d’un ami, la minimisation des regrets de Jeff Bezos, l’écoute de l’intuition, ou regarder le pire en face.' }
+  };
+
+  /* ---------- Effacement ---------- */
+  var RESETTERS = {
+    pile: function () { S.coin.pair = null; ui.coin = null; },
+    roue: function () { S.wheel.excluded = []; ui.wheel = null; },
+    'pour-contre': function () { S.pc = {}; S.pcSel = null; ui.balAngle = null; },
+    criteres: function () { S.crit = []; S.scores = {}; },
+    duel: function () { S.duel = null; },
+    '10-10-10': function () { S.ten = {}; },
+    questions: function () { S.qa = {}; S.qi = 0; },
+    guide: function () { ui.guide = {}; }
+  };
+  function hasEntries(r) {
+    switch (r) {
+      case 'pile': return !!ui.coin;
+      case 'roue': return !!ui.wheel || S.wheel.excluded.length > 0;
+      case 'pour-contre': return Object.keys(S.pc).some(function (k) { return S.pc[k].pour.length || S.pc[k].contre.length; });
+      case 'criteres': return S.crit.length > 0;
+      case 'duel': return !!(S.duel && S.duel.i > 0);
+      case '10-10-10': return Object.keys(S.ten).some(function (k) { return Object.keys(S.ten[k]).length > 0; });
+      case 'questions': return S.qi > 0 || Object.keys(S.qa).length > 0;
+      case 'guide': return Object.keys(ui.guide).length > 0;
+    }
+    return false;
+  }
+  function hasAnyData() {
+    return !!(S.question.trim() || S.options.length) || Object.keys(RESETTERS).some(hasEntries);
+  }
+  function snapshot() {
+    return { s: JSON.stringify(S), coin: ui.coin, wheel: ui.wheel, guide: JSON.parse(JSON.stringify(ui.guide)) };
+  }
+  function restore(snap) {
+    S = sanitize(JSON.parse(snap.s));
+    ui.coin = snap.coin; ui.wheel = snap.wheel; ui.guide = snap.guide; ui.balAngle = null;
+    flush(); render(); flash('Saisies restaurées');
+  }
+
+  /* ---------- Composants ---------- */
+  function topbar(title) {
+    return '<header class="topbar"><button class="icon-btn" data-act="back" aria-label="Retour">' + icon('back') + '</button>' +
+      '<h1 class="tb-title">' + title + '</h1>' +
+      (hasEntries(route) ? '<button class="reset-btn" data-act="reset-method" aria-label="Effacer les saisies de cette méthode">' + icon('reset') + 'Effacer</button>' : '') +
+      '</header>';
+  }
+  function ctx() { var t = S.question.trim(); return t ? '<p class="ctx">' + q(t) + '</p>' : ''; }
+  function screen(k, body) {
+    var m = M[k];
+    return '<div class="wrap screen">' + topbar(m.name) + ctx() + '<p class="lede">' + m.lede + '</p>' +
+      '<details class="why" data-ui="why"' + (ui.why[k] ? ' open' : '') + '><summary>Pourquoi ça marche</summary><p>' + m.why + '</p></details>' +
+      body + '</div>';
+  }
+  function optionsEditor(where) {
+    var n = S.options.length;
+    var chips = '<ul class="chips" aria-label="Tes options">' + S.options.map(function (o) {
+      return '<li class="chip"><span class="chip-l">' + esc(o.label) + '</span><button class="chip-x" data-act="opt-del" data-id="' + o.id +
+        '" aria-label="Retirer ' + esc(o.label) + '">' + icon('x') + '</button></li>';
+    }).join('') + '</ul>';
+    var form = n < 12 ? '<form class="add-row" data-form="opt-add" autocomplete="off"><input id="opt-in-' + where +
+      '" class="field" maxlength="40" enterkeyhint="done" aria-label="Nouvelle option" placeholder="' +
+      (n ? 'Une autre option' : 'Première option') + '"><button class="add-btn" type="submit" aria-label="Ajouter l’option">' +
+      icon('plus') + '</button></form>' : '<p class="hint">12 options au maximum.</p>';
+    return chips + form;
+  }
+  function optionsHint() {
+    var n = S.options.length;
+    if (n >= 2) return '';
+    return '<p class="hint">' + (n === 0
+      ? 'Ajoute au moins deux options. Pour une question en oui ou non, tu peux laisser vide.'
+      : 'Ajoute une deuxième option. Sinon, on partira sur « Oui » et « Non ».') + '</p>';
+  }
+  function inlineOptions() {
+    var n = S.options.length;
+    return '<details class="inline-opts" data-ui="opts"' + (ui.optsOpen || n < 2 ? ' open' : '') + '><summary>' +
+      (n >= 2 ? 'Tes options (' + n + ')' : 'Sans options : « Oui » ou « Non »') + '</summary>' + optionsEditor('inline') + optionsHint() + '</details>';
+  }
+  function verdict(o) {
+    var animate = ui.lastVerdict[route] !== o.key;
+    ui.lastVerdict[route] = o.key;
+    var word = o.word || '';
+    return '<section class="verdict tone-' + (o.tone || 'cobalt') + (animate && !reduced() ? ' reveal' : '') + '" aria-live="polite">' +
+      '<p class="v-kicker">' + o.kicker + '</p><p class="v-word' + (word.length > 14 ? ' long' : '') + '">' + esc(word) + '</p>' +
+      (o.note ? '<p class="v-note">' + o.note + '</p>' : '') +
+      (o.actions ? '<div class="v-actions">' + o.actions + '</div>' : '') + '</section>';
+  }
+  function rankList(items, fmt) {
+    var max = Math.max.apply(null, items.map(function (i) { return i.max || i.value; }).concat([1]));
+    return '<ol class="rank">' + items.map(function (it, idx) {
+      var w = Math.max(2, Math.round(100 * Math.max(0, it.value) / (it.max || max)));
+      return '<li class="' + (idx === 0 && it.win ? 'win' : '') + '"><div class="r-top"><span class="r-label">' + esc(it.label) +
+        '</span><span class="r-val">' + fmt(it) + '</span></div><div class="r-bar"><i style="width:' + w + '%"></i></div></li>';
+    }).join('') + '</ol>';
+  }
+  var coinButton = function (a, b, label) {
+    return '<button class="btn on-tone" data-act="to-coin" data-a="' + a + '" data-b="' + b + '">' + (label || 'Départager à pile ou face') + '</button>';
+  };
+
+  /* ---------- Accueil ---------- */
+  function methodRow(k) {
+    var m = M[k];
+    return '<button class="method" data-act="go" data-to="' + k + '"><span class="glyph">' + icon(m.icon) + '</span>' +
+      '<span class="m-text"><span class="m-name">' + m.name + '</span><span class="m-desc">' + m.desc + '</span></span>' +
+      '<span class="m-time">' + m.time + '</span></button>';
+  }
+  function viewHome() {
+    var hasData = S.question.trim() || S.options.length;
+    return '<div class="wrap home">' +
+      '<header class="brand">' + LOGO + '<span class="wordmark">Tranche</span>' +
+        (hasAnyData() ? '<button class="reset-btn" data-act="reset-all" aria-label="Tout effacer : question, options et réponses">' + icon('reset') + 'Tout effacer</button>' : '') +
+      '</header>' +
+      '<section class="dilemma">' +
+        '<label class="q-label" for="question">Quelle décision dois-tu prendre ?</label>' +
+        '<textarea id="question" class="q-input" rows="1" maxlength="120" placeholder="On mange quoi ce soir ?">' + esc(S.question) + '</textarea>' +
+        '<h2 class="sub">Tes options</h2>' + optionsEditor('home') + optionsHint() +
+        (!hasData ? '<button class="text-btn" data-act="example">Essayer avec un exemple</button>' : '') +
+      '</section>' +
+      '<button class="guide-entry" data-act="go" data-to="guide">' + icon('sign') +
+        '<span><strong>Je ne sais pas quelle méthode choisir</strong><span class="ge-sub">Trois questions pour trouver la bonne</span></span></button>' +
+      '<h2 class="group">Laisser faire le hasard</h2><div class="methods hasard">' + ['pile', 'roue'].map(methodRow).join('') + '</div>' +
+      '<h2 class="group">Prendre le temps d’y réfléchir</h2><div class="methods methode">' +
+        ['pour-contre', 'criteres', 'duel', '10-10-10', 'questions'].map(methodRow).join('') + '</div>' +
+      '</div>';
+  }
+
+  /* ---------- Pile ou face ---------- */
+  function coinPair() {
+    var o = opts(), ids = o.map(function (x) { return x.id; });
+    var pair = (S.coin.pair || []).filter(function (id, i, a) { return ids.indexOf(id) >= 0 && a.indexOf(id) === i; });
+    if (pair.length < 2) {
+      pair = pair.concat(ids.filter(function (id) { return pair.indexOf(id) < 0; })).slice(0, 2);
+    }
+    S.coin.pair = pair;
+    return pair;
+  }
+  var sizeCls = function (s) { return s.length > 22 ? 'l' : s.length > 11 ? 'm' : ''; };
+  function viewPile() {
+    var o = opts(), pair = coinPair();
+    var A = labelOf(pair[0]), B = labelOf(pair[1]);
+    var picker = o.length > 2 ? '<div class="picker"><p class="sub">Les deux options à départager</p><div class="chips sel">' +
+      o.map(function (x) {
+        return '<button class="chip toggle" data-act="coin-pick" data-id="' + x.id + '" aria-pressed="' + (pair.indexOf(x.id) >= 0) + '">' + esc(x.label) + '</button>';
+      }).join('') + '</div></div>' : '';
+    var r = ui.coin, result = '';
+    if (r) {
+      var win = r.res === 0 ? A : B, other = r.res === 0 ? B : A;
+      result = verdict({ key: 'c' + r.n, kicker: (r.res === 0 ? 'Pile' : 'Face') + ' ! La pièce est tombée sur', word: win, tone: r.res === 0 ? 'cobalt' : 'saffron' });
+      if (!r.gut) {
+        result += '<div class="gut"><p class="gut-q">Ta toute première réaction ?</p><div class="gut-btns">' +
+          '<button class="btn ghost" data-act="gut" data-v="relief">Ouf, tant mieux</button>' +
+          '<button class="btn ghost" data-act="gut" data-v="disappoint">Ah… dommage</button>' +
+          '<button class="btn ghost" data-act="gut" data-v="neutral">Ça m’est égal</button></div></div>';
+      } else {
+        var t = {
+          relief: 'Ton intuition est d’accord avec la pièce. Va pour ' + q(win) + '.',
+          disappoint: 'Ta déception est un indice : au fond, tu préfères ' + q(other) + '. Va pour ' + q(other) + '.',
+          neutral: 'Les deux te conviennent vraiment. Suis la pièce, va pour ' + q(win) + ', et n’y pense plus.'
+        }[r.gut];
+        result += '<div class="gut"><p class="gut-a">' + t + '</p></div>';
+      }
+    }
+    return screen('pile', (usingYesNo() ? inlineOptions() : '') + picker +
+      '<div class="coin-stage"><div class="coin-shadow" id="coin-shadow"></div><div class="coin" id="coin" style="transform:rotateX(' + mod(ui.coinRot, 360) + 'deg)">' +
+        '<div class="coin-face pile"><span class="cf-side">Pile</span><span class="cf-label ' + sizeCls(A) + '">' + esc(A) + '</span></div>' +
+        '<div class="coin-face face"><span class="cf-side">Face</span><span class="cf-label ' + sizeCls(B) + '">' + esc(B) + '</span></div>' +
+      '</div></div>' +
+      '<button class="btn primary big" data-act="coin-flip">' + (r ? 'Relancer la pièce' : 'Lancer la pièce') + '</button>' + result);
+  }
+  function flipCoin() {
+    if (busy) return;
+    var coin = $('#coin'), shadow = $('#coin-shadow');
+    if (!coin) return;
+    var res = rnd(2);
+    var start = ui.coinRot;
+    var end = start - mod(start, 360) + 360 * (5 + rnd(2)) + (res ? 180 : 0);
+    var finished = false;
+    var done = function () {
+      if (finished) return;
+      finished = true; busy = false;
+      ui.coinRot = mod(end, 360);
+      ui.coin = { res: res, gut: null, n: ++ui.coinN };
+      buzz(30);
+      render();
+    };
+    busy = true;
+    ui.coin = null;
+    Array.prototype.forEach.call(document.querySelectorAll('.verdict, .gut'), function (n) { n.remove(); });
+    var btn = $('[data-act="coin-flip"]'); if (btn) btn.disabled = true;
+    coin.style.transform = 'rotateX(' + mod(end, 360) + 'deg)';
+    if (reduced() || !coin.animate) { done(); return; }
+    var timing = { duration: 1500, easing: 'cubic-bezier(.3,.62,.35,1)' };
+    var anim = coin.animate([
+      { transform: 'translateY(0) rotateX(' + start + 'deg) scale(1)' },
+      { transform: 'translateY(-95px) rotateX(' + ((start + end) / 2) + 'deg) scale(1.12)', offset: 0.5 },
+      { transform: 'translateY(0) rotateX(' + end + 'deg) scale(1)' }
+    ], timing);
+    if (shadow && shadow.animate) shadow.animate([
+      { transform: 'scale(1)', opacity: 0.14 }, { transform: 'scale(.55)', opacity: 0.06, offset: 0.5 }, { transform: 'scale(1)', opacity: 0.14 }
+    ], timing);
+    anim.onfinish = done;
+    setTimeout(done, 2200);
+  }
+
+  /* ---------- Roue ---------- */
+  function wheelList() {
+    var all = opts(), ids = all.map(function (o) { return o.id; });
+    var ex = (S.wheel.excluded || []).filter(function (id) { return ids.indexOf(id) >= 0; });
+    var list = all.filter(function (o) { return ex.indexOf(o.id) < 0; });
+    if (list.length < 2) { ex = []; list = all; }
+    S.wheel.excluded = ex;
+    return list;
+  }
+  function wheelColors(n) {
+    if (n === 2) return ['c0', 'c1'];
+    var c = [];
+    for (var i = 0; i < n; i++) c.push('c' + (i % 3));
+    if (n % 3 === 1) c[n - 1] = 'c1';
+    return c;
+  }
+  function polar(r, deg) {
+    var a = (deg - 90) * Math.PI / 180;
+    return (r * Math.cos(a)).toFixed(2) + ' ' + (r * Math.sin(a)).toFixed(2);
+  }
+  function wheelSVG(list) {
+    var n = list.length, R = 100, seg = 360 / n, col = wheelColors(n);
+    var fs = n <= 4 ? 12 : n <= 6 ? 10.5 : n <= 9 ? 9 : 8;
+    var maxc = n <= 4 ? 13 : n <= 8 ? 12 : 10;
+    var paths = '', labels = '';
+    list.forEach(function (o, i) {
+      var a0 = i * seg, a1 = (i + 1) * seg, mid = a0 + seg / 2;
+      paths += '<path class="seg ' + col[i] + '" d="M0 0L' + polar(R, a0) + 'A' + R + ' ' + R + ' 0 ' + (seg > 180 ? 1 : 0) + ' 1 ' + polar(R, a1) + 'Z"/>';
+      var flip = mid > 180;
+      var tr = flip ? 'rotate(' + (mid + 90).toFixed(2) + ') translate(' + (-R * 0.88) + ' 0)' : 'rotate(' + (mid - 90).toFixed(2) + ') translate(' + (R * 0.88) + ' 0)';
+      labels += '<text class="seg-t ' + col[i] + '" font-size="' + fs + '" transform="' + tr + '" text-anchor="' + (flip ? 'start' : 'end') +
+        '" dominant-baseline="central">' + esc(trunc(o.label, maxc)) + '</text>';
+    });
+    return '<svg viewBox="-104 -104 208 208" role="img" aria-label="Roue avec ' + n + ' options">' + paths + labels +
+      '<circle class="ring" r="101.5"/><circle class="hub" r="11"/></svg>';
+  }
+  function viewRoue() {
+    var list = wheelList(), r = ui.wheel, ex = S.wheel.excluded.length;
+    var res = '';
+    if (r && list.some(function (o) { return o.id === r.id; })) {
+      res = verdict({ key: 'w' + r.n, kicker: 'La roue s’arrête sur', word: labelOf(r.id),
+        actions: list.length > 2 ? '<button class="btn on-tone" data-act="wheel-remove" data-id="' + r.id + '">Retirer cette option et relancer</button>' : '' });
+    }
+    return screen('roue', inlineOptions() +
+      '<div class="wheel-stage"><div class="wheel-pointer" aria-hidden="true"></div><div class="wheel" id="wheel" style="transform:rotate(' + ui.wheelRot + 'deg)">' +
+      wheelSVG(list) + '</div></div>' +
+      '<button class="btn primary big" data-act="wheel-spin">' + (r ? 'Relancer la roue' : 'Faire tourner la roue') + '</button>' + res +
+      (ex ? '<p class="center"><button class="text-btn" data-act="wheel-restore">Remettre toutes les options (' + plural(ex, 'retirée', 'retirées') + ')</button></p>' : ''));
+  }
+  function spinWheel() {
+    if (busy) return;
+    var el = $('#wheel');
+    if (!el) return;
+    var list = wheelList(), n = list.length, seg = 360 / n;
+    var k = rnd(n);
+    var theta = (k + 0.14 + 0.72 * rnd(1000) / 1000) * seg;
+    var cur = ui.wheelRot;
+    var target = cur + 360 * (5 + rnd(3)) + mod(-theta - cur, 360);
+    var finished = false;
+    var done = function () {
+      if (finished) return;
+      finished = true; busy = false;
+      ui.wheelRot = mod(target, 360);
+      ui.wheel = { id: list[k].id, n: ++ui.wheelN };
+      buzz(35);
+      render();
+    };
+    busy = true;
+    ui.wheel = null;
+    Array.prototype.forEach.call(document.querySelectorAll('.verdict'), function (x) { x.remove(); });
+    var btn = $('[data-act="wheel-spin"]'); if (btn) btn.disabled = true;
+    if (reduced()) { done(); return; }
+    el.style.transition = 'transform 4.2s cubic-bezier(.15,.72,.12,1)';
+    void el.offsetWidth;
+    el.style.transform = 'rotate(' + target + 'deg)';
+    el.addEventListener('transitionend', done, { once: true });
+    setTimeout(done, 4700);
+  }
+
+  /* ---------- Pour et contre ---------- */
+  function pcData(id) { if (!S.pc[id]) S.pc[id] = { pour: [], contre: [] }; return S.pc[id]; }
+  var wsum = function (l) { return l.reduce(function (s, a) { return s + a.w; }, 0); };
+  function balPos(a) {
+    var r = a * Math.PI / 180;
+    return { lx: 130 - 92 * Math.cos(r), ly: 34 - 92 * Math.sin(r), rx: 130 + 92 * Math.cos(r), ry: 34 + 92 * Math.sin(r) };
+  }
+  function balanceSVG(angle) {
+    var p = balPos(angle);
+    var pan = function (cls, x, y) {
+      return '<g class="bal-pan ' + cls + '" style="transform:translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px)">' +
+        '<path d="M0 0L-24 50M0 0L24 50"/><path class="pan" d="M-34 50H34A34 20 0 0 1-34 50Z"/></g>';
+    };
+    return '<svg class="balance" viewBox="0 0 260 150" aria-hidden="true"><path d="M130 34V140M100 142h60"/>' +
+      '<g class="bal-beam" style="transform:rotate(' + angle.toFixed(2) + 'deg)"><path d="M38 34H222"/></g>' +
+      '<circle class="pivot" cx="130" cy="34" r="6"/>' + pan('pour', p.lx, p.ly) + pan('contre', p.rx, p.ry) + '</svg>';
+  }
+  function argList(d, side) {
+    return '<ul class="args">' + d[side].map(function (a) {
+      return '<li class="arg"><span class="arg-t">' + esc(a.t) + '</span>' +
+        '<button class="weight w' + a.w + '" data-act="pc-w" data-side="' + side + '" data-id="' + a.id + '" aria-label="Poids ' + a.w + ' sur 3. Toucher pour changer"><i></i><i></i><i></i></button>' +
+        '<button class="icon-btn sm" data-act="pc-del" data-side="' + side + '" data-id="' + a.id + '" aria-label="Supprimer cet argument">' + icon('x') + '</button></li>';
+    }).join('') + '</ul>';
+  }
+  function viewPC() {
+    var multi = S.options.length >= 2;
+    var subjects = multi ? S.options : [{ id: '_', label: S.question.trim() || 'Ta décision' }];
+    var sel = subjects.some(function (s) { return s.id === S.pcSel; }) ? S.pcSel : subjects[0].id;
+    S.pcSel = sel;
+    var d = pcData(sel), sp = wsum(d.pour), sc = wsum(d.contre);
+    var angle = clamp((sc - sp) * 3, -15, 15);
+    ui.balTarget = angle;
+    if (ui.balAngle === null) ui.balAngle = angle;
+    var tabs = multi ? '<div class="tabs" role="tablist" aria-label="Option étudiée">' + subjects.map(function (s) {
+      var dd = S.pc[s.id], net = dd ? wsum(dd.pour) - wsum(dd.contre) : 0, has = dd && (dd.pour.length || dd.contre.length);
+      return '<button class="tab" role="tab" aria-selected="' + (s.id === sel) + '" data-act="pc-tab" data-id="' + s.id + '">' + esc(trunc(s.label, 20)) +
+        (has ? '<span class="n">' + (net > 0 ? '+' : net < 0 ? '−' : '') + Math.abs(net) + '</span>' : '') + '</button>';
+    }).join('') + '</div>' : '';
+    var hasArgs = d.pour.length + d.contre.length > 0;
+    var res = '';
+    if (!multi && hasArgs) {
+      var net = sp - sc;
+      res = verdict({ key: 'pc' + sp + ':' + sc,
+        kicker: net === 0 ? 'La balance est à l’équilibre' : 'La balance penche pour le',
+        word: net > 0 ? 'Oui' : net < 0 ? 'Non' : 'Égalité', tone: net < 0 ? 'saffron' : 'cobalt',
+        note: net === 0 ? 'Les arguments se valent. Quand tout s’équilibre, laisse la pièce trancher et observe ta réaction.'
+          : plural(sp, 'point', 'points') + ' pour, ' + plural(sc, 'point', 'points') + ' contre.',
+        actions: net === 0 ? coinButton('_oui', '_non') : '' });
+    } else if (multi) {
+      var rows = subjects.filter(function (s) { var x = S.pc[s.id]; return x && (x.pour.length || x.contre.length); })
+        .map(function (s) { var x = S.pc[s.id]; return { id: s.id, label: s.label, net: wsum(x.pour) - wsum(x.contre) }; })
+        .sort(function (a, b) { return b.net - a.net; });
+      if (rows.length >= 2) {
+        var tie = rows[0].net === rows[1].net;
+        res = verdict({ key: 'pcm' + rows.map(function (r) { return r.id + r.net; }).join(','),
+          kicker: tie ? 'Les deux premières options sont à égalité' : 'Avec ces arguments, la meilleure option est',
+          word: tie ? 'Égalité' : rows[0].label,
+          note: tie ? q(rows[0].label) + ' et ' + q(rows[1].label) + ' ont le même score.' : 'Score : ' + (rows[0].net > 0 ? '+' : '') + rows[0].net + ' (pour moins contre).',
+          actions: tie ? coinButton(rows[0].id, rows[1].id) : '' }) +
+          '<ul class="netlist">' + rows.map(function (r) {
+            return '<li><span>' + esc(r.label) + '</span><span class="v">' + (r.net > 0 ? '+' : r.net < 0 ? '−' : '') + Math.abs(r.net) + '</span></li>';
+          }).join('') + '</ul>';
+      } else if (hasArgs) {
+        res = '<p class="hint">Remplis aussi au moins une autre option pour les comparer.</p>';
+      }
+    }
+    return screen('pour-contre', tabs + balanceSVG(ui.balAngle) +
+      '<div class="bal-legend"><span>Pour <span class="n">' + sp + '</span></span><span>Contre <span class="n">' + sc + '</span></span></div>' +
+      '<div class="pc-cols">' +
+        '<section class="pour"><h2 class="pc-h"><span class="sw"></span>Pour<span class="pc-sum">' + plural(d.pour.length, 'argument', 'arguments') + '</span></h2>' + argList(d, 'pour') +
+          '<form class="add-row" data-form="pc-add" data-side="pour" autocomplete="off"><input id="pc-in-pour" class="field" maxlength="80" enterkeyhint="done" placeholder="Un argument pour" aria-label="Nouvel argument pour"><button class="add-btn" type="submit" aria-label="Ajouter l’argument pour">' + icon('plus') + '</button></form></section>' +
+        '<section class="contre"><h2 class="pc-h"><span class="sw"></span>Contre<span class="pc-sum">' + plural(d.contre.length, 'argument', 'arguments') + '</span></h2>' + argList(d, 'contre') +
+          '<form class="add-row" data-form="pc-add" data-side="contre" autocomplete="off"><input id="pc-in-contre" class="field" maxlength="80" enterkeyhint="done" placeholder="Un argument contre" aria-label="Nouvel argument contre"><button class="add-btn" type="submit" aria-label="Ajouter l’argument contre">' + icon('plus') + '</button></form></section>' +
+      '</div>' +
+      (hasArgs ? '<p class="hint">Touche les petites barres pour régler le poids d’un argument (1 à 3).</p>' : '') + res);
+  }
+
+  /* ---------- Critères ---------- */
+  var SUGG = ['Prix', 'Plaisir', 'Temps', 'Praticité', 'Long terme', 'Risque', 'Santé', 'Proximité'];
+  function score(cid, oid) { var s = S.scores[cid]; return (s && s[oid]) || 3; }
+  function dots(n, cur, act, attrs, label) {
+    var h = '<div class="dots" role="radiogroup" aria-label="' + label + '">';
+    for (var v = 1; v <= n; v++) {
+      h += '<button class="dot-btn' + (v <= cur ? ' on' : '') + '" role="radio" aria-checked="' + (v === cur) + '" aria-label="' + v + ' sur ' + n + '" data-act="' + act + '" data-v="' + v + '"' + attrs + '></button>';
+    }
+    return h + '</div>';
+  }
+  function viewCrit() {
+    var o = opts(), crits = S.crit;
+    var have = crits.map(function (c) { return c.label.toLowerCase(); });
+    var sugg = SUGG.filter(function (s) { return have.indexOf(s.toLowerCase()) < 0; });
+    var h = (usingYesNo() ? inlineOptions() : '') +
+      '<h2 class="step-h">1. Ce qui compte pour toi</h2>' +
+      (crits.length ? '<p class="legend">Importance : de 1 (un peu) à 5 (énormément)</p>' : '') +
+      crits.map(function (c) {
+        return '<div class="crit"><span class="crit-l">' + esc(c.label) + '</span>' + dots(5, c.w, 'crit-w', ' data-id="' + c.id + '"', 'Importance de ' + esc(c.label)) +
+          '<button class="icon-btn sm" data-act="crit-del" data-id="' + c.id + '" aria-label="Supprimer le critère ' + esc(c.label) + '">' + icon('x') + '</button></div>';
+      }).join('') +
+      (crits.length < 12 ? '<form class="add-row" data-form="crit-add" autocomplete="off"><input id="crit-in" class="field" maxlength="40" enterkeyhint="done" placeholder="Un critère, par exemple Ambiance" aria-label="Nouveau critère"><button class="add-btn" type="submit" aria-label="Ajouter le critère">' + icon('plus') + '</button></form>' : '') +
+      (sugg.length ? '<div class="sugg">' + sugg.map(function (s) { return '<button data-act="crit-sugg" data-v="' + s + '">+ ' + s + '</button>'; }).join('') + '</div>' : '');
+    if (!crits.length) return screen('criteres', h + '<p class="hint">Commence par ajouter deux ou trois critères.</p>');
+    h += '<h2 class="step-h">2. Note chaque option</h2><p class="legend">De 1 (mauvais) à 5 (excellent) sur ce critère</p>' +
+      crits.map(function (c) {
+        return '<div class="rate-block"><div class="rate-h">' + esc(c.label) + '<span>importance ' + c.w + '/5</span></div>' +
+          o.map(function (x) {
+            return '<div class="rate-row"><span class="r-o">' + esc(x.label) + '</span>' +
+              dots(5, score(c.id, x.id), 'score', ' data-c="' + c.id + '" data-o="' + x.id + '"', esc(x.label) + ', ' + esc(c.label)) + '</div>';
+          }).join('') + '</div>';
+      }).join('');
+    var touched = crits.some(function (c) { return S.scores[c.id] && o.some(function (x) { return S.scores[c.id][x.id]; }); });
+    if (!touched) return screen('criteres', h + '<p class="hint">Toutes les notes sont à 3 pour l’instant. Ajuste-les pour voir le résultat.</p>');
+    var tot = o.map(function (x) {
+      var s = 0, m = 0;
+      crits.forEach(function (c) { s += c.w * score(c.id, x.id); m += c.w * 5; });
+      return { id: x.id, label: x.label, value: Math.round(100 * s / m), max: 100, win: true };
+    }).sort(function (a, b) { return b.value - a.value; });
+    var a = tot[0], b = tot[1], key = 'cr' + tot.map(function (t) { return t.id + t.value; }).join(',');
+    var diff = null, best = 0;
+    crits.forEach(function (c) { var g = c.w * (score(c.id, a.id) - score(c.id, b.id)); if (g > best) { best = g; diff = c; } });
+    var close = a.value - b.value <= 3;
+    var note = a.value === b.value
+      ? q(a.label) + ' et ' + q(b.label) + ' obtiennent exactement le même score.'
+      : (close ? 'C’est très serré avec ' + q(b.label) + ' (' + b.value + '/100). ' : q(a.label) + ' obtient ' + a.value + '/100, devant ' + q(b.label) + ' (' + b.value + '). ') +
+        (diff ? 'Ce qui fait la différence : ' + esc(diff.label.toLowerCase()) + '.' : '');
+    h += '<h2 class="step-h">3. Résultat</h2>' +
+      verdict({ key: key, kicker: a.value === b.value ? 'Impossible de les départager' : 'Selon tes critères, la meilleure option est',
+        word: a.value === b.value ? 'Égalité' : a.label, note: note,
+        actions: close ? coinButton(a.id, b.id, close && a.value !== b.value ? 'Faire le test de la pièce' : null) : '' }) +
+      rankList(a.value === b.value ? tot.map(function (t) { return { id: t.id, label: t.label, value: t.value, max: 100, win: false }; }) : tot,
+        function (it) { return it.value + '/100'; });
+    return screen('criteres', h);
+  }
+
+  /* ---------- Duel ---------- */
+  function newDuel(o, key) {
+    var pairs = [];
+    for (var i = 0; i < o.length; i++) for (var j = i + 1; j < o.length; j++) pairs.push(rnd(2) ? [o[i].id, o[j].id] : [o[j].id, o[i].id]);
+    shuffle(pairs);
+    var pts = {};
+    o.forEach(function (x) { pts[x.id] = 0; });
+    return { key: key, pairs: pairs, i: 0, pts: pts, hist: [] };
+  }
+  function duelState() {
+    var o = opts(), key = o.map(function (x) { return x.id; }).sort().join('|');
+    if (!S.duel || S.duel.key !== key) { S.duel = newDuel(o, key); persist(); }
+    return S.duel;
+  }
+  function viewDuel() {
+    var o = opts(), d = duelState(), total = d.pairs.length;
+    var head = (usingYesNo() || o.length < 3 ? inlineOptions() : '') +
+      '<div class="progress" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + d.i + '"><i style="width:' + (100 * d.i / total) + '%"></i></div>';
+    if (d.i < total) {
+      var p = d.pairs[d.i];
+      return screen('duel', head + '<p class="progress-t">Duel ' + (d.i + 1) + ' sur ' + total + '</p>' +
+        '<p class="duel-q">Tu préfères…</p><div class="duel">' +
+          '<button class="duel-btn a" data-act="duel-pick" data-id="' + p[0] + '">' + esc(labelOf(p[0])) + '</button>' +
+          '<button class="duel-btn b" data-act="duel-pick" data-id="' + p[1] + '">' + esc(labelOf(p[1])) + '</button>' +
+          '<span class="duel-or" aria-hidden="true">ou</span></div>' +
+        '<div class="duel-tools"><button class="text-btn" data-act="duel-tie">Je n’arrive pas à choisir</button>' +
+          (d.hist.length ? '<button class="text-btn" data-act="duel-undo">Annuler le dernier choix</button>' : '') + '</div>');
+    }
+    var rows = o.map(function (x) { return { id: x.id, label: x.label, value: d.pts[x.id] || 0, max: o.length - 1, win: true }; })
+      .sort(function (a, b) { return b.value - a.value; });
+    var tie = rows.length > 1 && rows[0].value === rows[1].value;
+    if (tie) rows.forEach(function (r) { r.win = false; });
+    var v = verdict({ key: 'd' + d.key + ':' + rows.map(function (r) { return r.value; }).join(','),
+      kicker: tie ? 'Personne ne se détache en tête' : 'Le grand gagnant des duels',
+      word: tie ? 'Égalité' : rows[0].label,
+      note: tie ? q(rows[0].label) + ' et ' + q(rows[1].label) + ' ont autant de points.'
+        : num(rows[0].value) + ' point' + (rows[0].value >= 2 ? 's' : '') + ' sur ' + (o.length - 1) + ' possible' + (o.length > 2 ? 's' : '') + '.',
+      actions: tie ? coinButton(rows[0].id, rows[1].id) : '' });
+    return screen('duel', head + '<p class="progress-t">Tous les duels sont faits</p>' + v +
+      rankList(rows, function (it) { return num(it.value) + ' pt' + (it.value >= 2 ? 's' : ''); }) +
+      '<button class="btn ghost big" data-act="duel-reset">Refaire les duels</button>');
+  }
+
+  /* ---------- 10 / 10 / 10 ---------- */
+  var HZ = [['m', 'Dans 10 minutes'], ['mo', 'Dans 10 mois'], ['y', 'Dans 10 ans']];
+  var FL = { '-2': 'Très mal', '-1': 'Plutôt mal', '0': 'Neutre', '1': 'Plutôt bien', '2': 'Très bien' };
+  function view10() {
+    var o = opts();
+    var blocks = o.map(function (x) {
+      var t = S.ten[x.id] || {};
+      return '<section class="ten"><h2 class="ten-h">Si tu choisis ' + q(x.label) + '…</h2>' + HZ.map(function (hz) {
+        return '<div class="ten-row"><span class="ten-l">' + hz[1] + '</span><div class="faces" role="radiogroup" aria-label="' + hz[1] + ', ' + esc(x.label) + '">' +
+          [-2, -1, 0, 1, 2].map(function (v) {
+            var on = t[hz[0]] === v;
+            return '<button class="face-btn' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" aria-label="' + FL[v] + '" data-act="ten-set" data-o="' + x.id + '" data-k="' + hz[0] + '" data-v="' + v + '">' + face(v) + '</button>';
+          }).join('') + '</div></div>';
+      }).join('') + '</section>';
+    }).join('');
+    var missing = 0;
+    o.forEach(function (x) { HZ.forEach(function (hz) { if (!S.ten[x.id] || S.ten[x.id][hz[0]] == null) missing++; }); });
+    var res = '';
+    if (missing) {
+      res = '<p class="hint">Encore ' + plural(missing, 'réponse', 'réponses') + ' avant le résultat.</p>';
+    } else {
+      var rows = o.map(function (x) { var t = S.ten[x.id]; return { id: x.id, label: x.label, m: t.m, mo: t.mo, y: t.y, tot: t.m + t.mo + t.y }; });
+      var bestOf = function (k) {
+        var mx = Math.max.apply(null, rows.map(function (r) { return r[k]; }));
+        var w = rows.filter(function (r) { return r[k] === mx; });
+        return w.length === 1 ? w[0] : null;
+      };
+      var sorted = rows.slice().sort(function (a, b) { return b.tot - a.tot || b.y - a.y || b.mo - a.mo; });
+      var a = sorted[0], b = sorted[1];
+      var tie = b && a.tot === b.tot && a.y === b.y && a.mo === b.mo;
+      var sw = bestOf('m'), lw = bestOf('y');
+      var insight = lw && lw.id !== a.id
+        ? 'Au total, c’est elle qui l’emporte. Mais à 10 ans, c’est ' + q(lw.label) + ' qui te laisse le meilleur ressenti : si le long terme compte le plus pour toi, regarde plutôt de ce côté.'
+        : sw && sw.id !== a.id
+          ? 'Sur le moment, ' + q(sw.label) + ' te tente davantage. Mais avec le recul, c’est ' + q(a.label) + ' qui l’emporte, et c’est souvent le long terme qu’on regrette d’avoir négligé.'
+          : 'Elle l’emporte maintenant comme plus tard : pas de piège caché.';
+      res = verdict({ key: 't' + rows.map(function (r) { return r.id + r.m + r.mo + r.y; }).join(','),
+        kicker: tie ? 'Sur la durée, tes options se valent' : 'Avec le recul, le meilleur choix semble être',
+        word: tie ? 'Égalité' : a.label,
+        note: tie ? q(a.label) + ' et ' + q(b.label) + ' te laissent le même ressenti, maintenant comme plus tard.' : insight,
+        actions: tie ? coinButton(a.id, b.id) : '' }) +
+        '<ul class="ten-sum">' + sorted.map(function (r) {
+          return '<li><span class="lab">' + esc(r.label) + '</span><span class="mini" aria-label="10 minutes : ' + FL[r.m] + ', 10 mois : ' + FL[r.mo] + ', 10 ans : ' + FL[r.y] + '">' +
+            face(r.m) + face(r.mo) + face(r.y) + '</span><span class="tot">' + (r.tot > 0 ? '+' : r.tot < 0 ? '−' : '') + Math.abs(r.tot) + '</span></li>';
+        }).join('') + '</ul>';
+    }
+    return screen('10-10-10', (usingYesNo() ? inlineOptions() : '') + blocks + res);
+  }
+
+  /* ---------- Les bonnes questions ---------- */
+  var QS = [
+    { t: 'Si tu devais choisir dans les cinq secondes, ce serait…', h: 'Ton premier réflexe compte : ton intuition a souvent déjà fait une partie du travail.', k: 'Ton intuition' },
+    { t: 'Que conseillerais-tu à ton meilleur ami s’il était à ta place ?', h: 'On voit plus clair pour les autres que pour soi. Prendre du recul aide à raisonner plus sagement.', k: 'Le conseil à un ami' },
+    { t: 'À 80 ans, lequel regretterais-tu le plus de ne pas avoir choisi ?', h: 'C’est la « minimisation des regrets », la méthode que Jeff Bezos dit avoir utilisée avant de créer Amazon.', k: 'Les regrets' },
+    { t: 'Si personne ne devait jamais savoir ce que tu as choisi ?', h: 'Sans le regard des autres, il reste ce que tu veux vraiment, toi.', k: 'Le regard des autres' },
+    { t: 'Lequel te donne le plus d’énergie quand tu t’imagines dedans ?', h: 'Imagine-toi concrètement, demain matin. Le corps réagit souvent avant la tête.', k: 'L’énergie' },
+    { t: 'Si tout tourne mal, lequel a le pire scénario le plus supportable ?', h: 'Regarder le pire en face le rend souvent moins effrayant, et montre ce qui est vraiment en jeu.', k: 'Le pire scénario' },
+    { t: 'Lequel ressemble le plus à la personne que tu veux devenir ?', h: 'Chaque choix construit un peu qui tu es. Lequel va dans le bon sens ?', k: 'Tes valeurs' },
+    { t: 'Lequel serait le plus facile à rattraper si tu te trompes ?', h: 'Une décision réversible mérite moins d’hésitation : si elle se rattrape, tu peux tenter.', k: 'La réversibilité' }
+  ];
+  function viewQ() {
+    var o = opts(), i = clamp(S.qi, 0, QS.length);
+    var prog = '<div class="progress" role="progressbar" aria-label="Avancement" aria-valuemin="0" aria-valuemax="' + QS.length + '" aria-valuenow="' + i + '"><i style="width:' + (100 * i / QS.length) + '%"></i></div>';
+    if (i < QS.length) {
+      var qq = QS[i];
+      return screen('questions', (usingYesNo() ? inlineOptions() : '') + prog +
+        '<div class="qcard"><p class="q-num">Question ' + (i + 1) + ' sur ' + QS.length + '</p><h2 class="q-text">' + qq.t + '</h2><p class="q-hint">' + qq.h + '</p></div>' +
+        '<div class="answers">' + o.map(function (x) {
+          return '<button class="btn answer" aria-pressed="' + (S.qa[i] === x.id) + '" data-act="q-ans" data-v="' + x.id + '">' + esc(x.label) + '</button>';
+        }).join('') + '<button class="text-btn" data-act="q-ans" data-v="skip">' + (o.length > 2 ? 'Aucun' : 'Aucun des deux') + ', ou je ne sais pas</button></div>' +
+        (i > 0 ? '<button class="text-btn" data-act="q-prev">Revenir à la question précédente</button>' : ''));
+    }
+    var tally = {};
+    o.forEach(function (x) { tally[x.id] = 0; });
+    QS.forEach(function (qq, j) { var v = S.qa[j]; if (v && tally[v] != null) tally[v]++; });
+    var rows = o.map(function (x) { return { id: x.id, label: x.label, value: tally[x.id], max: QS.length, win: true }; })
+      .sort(function (a, b) { return b.value - a.value; });
+    var res;
+    if (rows[0].value === 0) {
+      res = '<p class="hint">Tu n’as penché pour aucune option. Essaie une autre méthode, ou le test de la pièce.</p>';
+    } else {
+      var tie = rows[1] && rows[0].value === rows[1].value;
+      if (tie) rows.forEach(function (r) { r.win = false; });
+      res = verdict({ key: 'q' + rows.map(function (r) { return r.id + r.value; }).join(','),
+        kicker: tie ? 'Tes réponses sont partagées' : 'Tes réponses penchent pour',
+        word: tie ? 'Égalité' : rows[0].label,
+        note: tie ? q(rows[0].label) + ' et ' + q(rows[1].label) + ' ont recueilli autant de réponses.'
+          : plural(rows[0].value, 'réponse', 'réponses') + ' sur ' + QS.length + ' vont dans ce sens.',
+        actions: tie ? coinButton(rows[0].id, rows[1].id) : '' }) +
+        rankList(rows, function (it) { return it.value + '/' + QS.length; });
+    }
+    return screen('questions', prog + res +
+      '<h2 class="step-h">Tes réponses</h2><ul class="recap">' + QS.map(function (qq, j) {
+        var v = S.qa[j], lab = v && v !== 'skip' ? labelOf(v) : '';
+        return '<li><span>' + qq.k + '</span><strong>' + (lab ? esc(lab) : 'sans réponse') + '</strong></li>';
+      }).join('') + '</ul><button class="btn ghost big" data-act="q-reset">Recommencer les questions</button>');
+  }
+
+  /* ---------- Guide ---------- */
+  var GQ = [
+    { k: 'imp', t: 'Cette décision est-elle importante ?', a: [['low', 'Pas vraiment'], ['mid', 'Un peu'], ['high', 'Oui, beaucoup']] },
+    { k: 'n', t: 'Tu choisis entre…', a: [['yn', 'Oui ou non'], ['two', 'Deux options'], ['many', 'Trois options ou plus']] },
+    { k: 'block', t: 'Qu’est-ce qui te bloque ?', a: [['params', 'Trop de choses à comparer'], ['want', 'Je ne sais pas ce que je veux vraiment'], ['regret', 'J’ai peur de regretter']], when: function (g) { return g.imp === 'high'; } }
+  ];
+  var REASON = {
+    pile: 'Pour une petite décision à deux options, laisse tomber la pièce… et observe ta réaction au résultat.',
+    roue: 'Peu d’enjeu et plusieurs options : le hasard te fait gagner du temps.',
+    'pour-contre': 'Poser les arguments par écrit et les peser suffit souvent à y voir clair.',
+    duel: 'Avec plusieurs options, comparer deux par deux est bien plus simple que de tout classer d’un coup.',
+    criteres: 'Quand beaucoup de paramètres entrent en jeu, les noter un par un évite d’en oublier ou de tout mélanger.',
+    questions: 'Quelques questions de recul aident à faire remonter ce que tu veux vraiment.',
+    '10-10-10': 'Te projeter à 10 minutes, 10 mois et 10 ans aide à ne pas laisser la peur du moment décider.'
+  };
+  function recommend(g) {
+    if (g.imp === 'low') return g.n === 'many' ? ['roue', 'duel'] : ['pile', 'roue'];
+    if (g.imp === 'mid') return g.n === 'many' ? ['duel', 'criteres'] : ['pour-contre', 'pile'];
+    return { params: ['criteres', 'pour-contre'], want: ['questions', 'pile'], regret: ['10-10-10', 'questions'] }[g.block];
+  }
+  function viewGuide() {
+    var g = ui.guide, h = '', complete = true;
+    for (var i = 0; i < GQ.length; i++) {
+      var gq = GQ[i];
+      if (gq.when && !gq.when(g)) continue;
+      h += '<div class="g-q"><h2>' + gq.t + '</h2><div class="answers">' + gq.a.map(function (a) {
+        return '<button class="btn answer" aria-pressed="' + (g[gq.k] === a[0]) + '" data-act="g-ans" data-k="' + gq.k + '" data-v="' + a[0] + '">' + a[1] + '</button>';
+      }).join('') + '</div></div>';
+      if (!g[gq.k]) { complete = false; break; }
+    }
+    if (complete) {
+      var rec = recommend(g), m = M[rec[0]], alt = M[rec[1]];
+      h += verdict({ key: 'g' + rec.join(), kicker: 'Essaie plutôt', word: m.name, note: REASON[rec[0]],
+        actions: '<button class="btn on-tone" data-act="go" data-to="' + rec[0] + '">Commencer</button>' +
+          '<button class="btn on-tone" data-act="go" data-to="' + rec[1] + '">Ou bien : ' + alt.name + '</button>' }) +
+        '<p class="center"><button class="text-btn" data-act="g-reset">Recommencer le guide</button></p>';
+    }
+    return '<div class="wrap screen">' + topbar('Quelle méthode choisir ?') +
+      '<p class="lede">Réponds à ces questions, on te conseille la méthode la plus adaptée.</p>' + h + '</div>';
+  }
+
+  /* ---------- Navigation ---------- */
+  var VIEWS = { pile: viewPile, roue: viewRoue, 'pour-contre': viewPC, criteres: viewCrit, duel: viewDuel, '10-10-10': view10, questions: viewQ, guide: viewGuide };
+  var route = '';
+  function parseRoute() { var h = location.hash.replace(/^#\/?/, ''); return VIEWS[h] ? h : ''; }
+  function go(r) {
+    var depth = (history.state && history.state.depth) || 0;
+    try { history.pushState({ depth: depth + 1 }, '', r ? '#' + r : location.pathname + location.search); }
+    catch (e) { location.hash = r; return; }
+    route = r;
+    render(true);
+  }
+  function back() {
+    if (history.state && history.state.depth > 0) { history.back(); return; }
+    try { history.replaceState({ depth: 0 }, '', location.pathname + location.search); } catch (e) {}
+    route = '';
+    render(true);
+  }
+  window.addEventListener('popstate', function () { route = parseRoute(); render(true); });
+  window.addEventListener('hashchange', function () { var r = parseRoute(); if (r !== route) { route = r; render(true); } });
+
+  function autosize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+  function render(nav) {
+    if (busy && !nav) return;
+    if (nav) busy = false;
+    var app = $('#app'), active = document.activeElement, aid = active && active.id, sel = null;
+    if (aid && typeof active.selectionStart === 'number') { try { sel = [active.selectionStart, active.selectionEnd]; } catch (e) {} }
+    app.innerHTML = typo((VIEWS[route] || viewHome)());
+    document.title = route ? (route === 'guide' ? 'Quelle méthode ?' : M[route].name) + ' – Tranche' : 'Tranche, aide à la décision';
+    if (nav) {
+      window.scrollTo(0, 0);
+    } else if (aid) {
+      var el = document.getElementById(aid);
+      if (el) {
+        try { el.focus({ preventScroll: true }); } catch (e) { el.focus(); }
+        if (sel && el.setSelectionRange) { try { el.setSelectionRange(sel[0], sel[1]); } catch (e) {} }
+      }
+    }
+    var qi = $('#question');
+    if (qi) autosize(qi);
+    if (route === 'pour-contre' && ui.balAngle !== ui.balTarget) {
+      var target = ui.balTarget;
+      ui.balAngle = target;
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          var beam = $('.bal-beam'), p = balPos(target), pans = document.querySelectorAll('.bal-pan');
+          if (!beam || pans.length < 2) return;
+          beam.style.transform = 'rotate(' + target.toFixed(2) + 'deg)';
+          pans[0].style.transform = 'translate(' + p.lx.toFixed(2) + 'px,' + p.ly.toFixed(2) + 'px)';
+          pans[1].style.transform = 'translate(' + p.rx.toFixed(2) + 'px,' + p.ry.toFixed(2) + 'px)';
+        });
+      });
+    }
+  }
+  var undoFn = null;
+  function flash(msg, undo) {
+    var t = $('#toast'), b = $('#toast-act');
+    $('#toast-msg').textContent = msg;
+    undoFn = undo || null;
+    b.hidden = !undo;
+    t.classList.add('show');
+    clearTimeout(flash.t);
+    flash.t = setTimeout(function () { t.classList.remove('show'); b.hidden = true; undoFn = null; }, undo ? 6500 : 2300);
+  }
+
+  /* ---------- Actions ---------- */
+  var ACTIONS = {
+    go: function (t) { go(t.getAttribute('data-to') || ''); },
+    back: function () { back(); },
+    example: function () {
+      S.question = 'On mange quoi ce soir ?';
+      S.options = ['Pizza', 'Sushi', 'Tacos', 'Curry'].map(function (l) { return { id: uid(), label: l }; });
+      persist(); render();
+    },
+    'reset-all': function () {
+      var snap = snapshot();
+      S = fresh();
+      ui.coin = null; ui.wheel = null; ui.guide = {}; ui.balAngle = null; ui.lastVerdict = {}; ui.optsOpen = false;
+      flush(); render();
+      flash('Tout est effacé', function () { restore(snap); });
+    },
+    'reset-method': function () {
+      var fn = RESETTERS[route];
+      if (!fn) return;
+      var snap = snapshot();
+      fn();
+      ui.lastVerdict[route] = null;
+      flush(); render(); window.scrollTo(0, 0);
+      flash('Saisies effacées', function () { restore(snap); });
+    },
+    undo: function () {
+      var f = undoFn;
+      undoFn = null;
+      $('#toast-act').hidden = true;
+      $('#toast').classList.remove('show');
+      if (f) f();
+    },
+    'opt-del': function (t) {
+      var id = t.getAttribute('data-id');
+      S.options = S.options.filter(function (o) { return o.id !== id; });
+      ui.coin = null; ui.wheel = null;
+      persist(); render();
+    },
+    'to-coin': function (t) {
+      S.coin.pair = [t.getAttribute('data-a'), t.getAttribute('data-b')];
+      ui.coin = null; persist(); go('pile');
+    },
+    'coin-pick': function (t) {
+      var id = t.getAttribute('data-id'), pair = coinPair();
+      if (pair.indexOf(id) >= 0) return;
+      S.coin.pair = [pair[1], id];
+      ui.coin = null; persist(); render();
+    },
+    'coin-flip': function () { flipCoin(); },
+    gut: function (t) { if (ui.coin) { ui.coin.gut = t.getAttribute('data-v'); render(); } },
+    'wheel-spin': function () { spinWheel(); },
+    'wheel-remove': function (t) {
+      S.wheel.excluded.push(t.getAttribute('data-id'));
+      ui.wheel = null; persist(); render();
+      requestAnimationFrame(function () { requestAnimationFrame(spinWheel); });
+    },
+    'wheel-restore': function () { S.wheel.excluded = []; ui.wheel = null; persist(); render(); },
+    'pc-tab': function (t) { S.pcSel = t.getAttribute('data-id'); ui.balAngle = null; persist(); render(); },
+    'pc-w': function (t) {
+      var d = pcData(S.pcSel), side = t.getAttribute('data-side'), id = t.getAttribute('data-id');
+      d[side].forEach(function (a) { if (a.id === id) a.w = a.w % 3 + 1; });
+      persist(); render();
+    },
+    'pc-del': function (t) {
+      var d = pcData(S.pcSel), side = t.getAttribute('data-side'), id = t.getAttribute('data-id');
+      d[side] = d[side].filter(function (a) { return a.id !== id; });
+      persist(); render();
+    },
+    'crit-sugg': function (t) { addCrit(t.getAttribute('data-v')); },
+    'crit-w': function (t) {
+      var id = t.getAttribute('data-id'), v = +t.getAttribute('data-v');
+      S.crit.forEach(function (c) { if (c.id === id) c.w = v; });
+      persist(); render();
+    },
+    'crit-del': function (t) {
+      var id = t.getAttribute('data-id');
+      S.crit = S.crit.filter(function (c) { return c.id !== id; });
+      delete S.scores[id];
+      persist(); render();
+    },
+    score: function (t) {
+      var c = t.getAttribute('data-c'), o = t.getAttribute('data-o');
+      if (!S.scores[c]) S.scores[c] = {};
+      S.scores[c][o] = +t.getAttribute('data-v');
+      persist(); render();
+    },
+    'duel-pick': function (t) {
+      var d = duelState(), id = t.getAttribute('data-id');
+      if (d.i >= d.pairs.length) return;
+      d.hist.push({ i: d.i, w: id });
+      d.pts[id] = (d.pts[id] || 0) + 1;
+      d.i++;
+      buzz(12); persist(); render();
+    },
+    'duel-tie': function () {
+      var d = duelState();
+      if (d.i >= d.pairs.length) return;
+      var p = d.pairs[d.i];
+      d.hist.push({ i: d.i, w: null });
+      d.pts[p[0]] += 0.5; d.pts[p[1]] += 0.5;
+      d.i++;
+      persist(); render();
+    },
+    'duel-undo': function () {
+      var d = duelState(), h = d.hist.pop();
+      if (!h) return;
+      if (h.w) d.pts[h.w] -= 1;
+      else { var p = d.pairs[h.i]; d.pts[p[0]] -= 0.5; d.pts[p[1]] -= 0.5; }
+      d.i = h.i;
+      persist(); render();
+    },
+    'duel-reset': function () { S.duel = null; persist(); render(); window.scrollTo(0, 0); },
+    'ten-set': function (t) {
+      var o = t.getAttribute('data-o'), k = t.getAttribute('data-k');
+      if (!S.ten[o]) S.ten[o] = {};
+      S.ten[o][k] = +t.getAttribute('data-v');
+      persist(); render();
+    },
+    'q-ans': function (t) {
+      S.qa[S.qi] = t.getAttribute('data-v');
+      S.qi = Math.min(QS.length, S.qi + 1);
+      persist(); render(); window.scrollTo(0, 0);
+    },
+    'q-prev': function () { S.qi = Math.max(0, S.qi - 1); persist(); render(); },
+    'q-reset': function () { S.qa = {}; S.qi = 0; persist(); render(); window.scrollTo(0, 0); },
+    'g-ans': function (t) { ui.guide[t.getAttribute('data-k')] = t.getAttribute('data-v'); render(); },
+    'g-reset': function () { ui.guide = {}; render(); window.scrollTo(0, 0); }
+  };
+  function addCrit(label) {
+    label = (label || '').trim().replace(/\s+/g, ' ').slice(0, 40);
+    if (!label) return false;
+    if (S.crit.some(function (c) { return c.label.toLowerCase() === label.toLowerCase(); })) { flash('Ce critère est déjà dans la liste'); return false; }
+    if (S.crit.length >= 12) { flash('12 critères au maximum'); return false; }
+    S.crit.push({ id: uid(), label: label, w: 3 });
+    persist(); render();
+    return true;
+  }
+  var FORMS = {
+    'opt-add': function (f) {
+      var inp = f.querySelector('input'), v = inp.value.trim().replace(/\s+/g, ' ').slice(0, 40);
+      if (!v) return;
+      if (S.options.length >= 12) { flash('12 options au maximum'); return; }
+      if (S.options.some(function (o) { return o.label.toLowerCase() === v.toLowerCase(); })) { flash('Cette option est déjà dans la liste'); return; }
+      S.options.push({ id: uid(), label: v });
+      inp.value = '';
+      if (f.closest('.inline-opts')) ui.optsOpen = true;
+      ui.coin = null; ui.wheel = null;
+      persist(); render();
+    },
+    'pc-add': function (f) {
+      var inp = f.querySelector('input'), v = inp.value.trim().replace(/\s+/g, ' ').slice(0, 80), side = f.getAttribute('data-side');
+      if (!v) return;
+      var d = pcData(S.pcSel);
+      if (d[side].length >= 20) { flash('20 arguments au maximum par colonne'); return; }
+      d[side].push({ id: uid(), t: v, w: 2 });
+      inp.value = '';
+      persist(); render();
+    },
+    'crit-add': function (f) { var inp = f.querySelector('input'); if (addCrit(inp.value)) { var el = $('#crit-in'); if (el) el.value = ''; } }
+  };
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-act]') : null;
+    if (!t || t.disabled) return;
+    var fn = ACTIONS[t.getAttribute('data-act')];
+    if (fn) { e.preventDefault(); fn(t, e); }
+  });
+  document.addEventListener('submit', function (e) {
+    var fn = FORMS[e.target.getAttribute('data-form')];
+    if (fn) { e.preventDefault(); fn(e.target); }
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'question') {
+      S.question = e.target.value.slice(0, 120);
+      autosize(e.target);
+      persist();
+    }
+  });
+  document.addEventListener('toggle', function (e) {
+    var d = e.target;
+    if (!d || !d.getAttribute) return;
+    var k = d.getAttribute('data-ui');
+    if (k === 'why') ui.why[route] = d.open;
+    if (k === 'opts') ui.optsOpen = d.open;
+  }, true);
+
+  /* ---------- Démarrage ---------- */
+  route = parseRoute();
+  try { if (!history.state || typeof history.state.depth !== 'number') history.replaceState({ depth: 0 }, '', location.href); } catch (e) {}
+  render(true);
+
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', function () {
+      try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {}
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "Tranche, aide à la décision",
+  "short_name": "Tranche",
+  "description": "Pile ou face, roue, pour et contre, critères, duel, 10/10/10 : des méthodes simples pour t’aider à trancher.",
+  "lang": "fr",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F1F3F8",
+  "theme_color": "#F1F3F8",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
